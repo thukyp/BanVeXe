@@ -1,50 +1,36 @@
-# Maven
-
+# Maven build
 target/
 !.mvn/wrapper/maven-wrapper.jar
 
 # Logs
-
 *.log
 
 # Temporary files
-
 *.tmp
 *.temp
 
 # OS files
-
 .DS_Store
 Thumbs.db
+Desktop.ini
+ehthumbs.db
 
 # IDE
-
 .idea/
 *.iml
 .vscode/
 
-# Build
-
+# Java compiled
 *.class
-*.jar
-*.war
 
 # Environment
-
 .env
 
-# Node (nếu frontend dùng JS)
-
+# Node (nếu có frontend)
 node_modules/
 dist/
 build/
 
 # Mac
-
 .AppleDouble
 .LSOverride
-
-# Windows
-
-ehthumbs.db
-Desktop.ini
