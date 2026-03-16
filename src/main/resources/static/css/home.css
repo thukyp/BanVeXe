@@ -1,0 +1,120 @@
+body{
+margin:0;
+font-family:Arial;
+background:#f4f6f9;
+}
+
+/* HEADER */
+
+header{
+background:#3a7bd5;
+color:white;
+padding:15px 40px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+font-size:18px;
+}
+
+.menu a{
+color:white;
+text-decoration:none;
+margin-left:20px;
+font-size:16px;
+}
+
+/* BANNER */
+
+.banner{
+height:380px;
+background:url("https://images.unsplash.com/photo-1503376780353-7e6692767b70") center/cover no-repeat;
+position:relative;
+}
+
+/* SEARCH BOX */
+
+.search-box{
+position:absolute;
+top:70%;
+left:50%;
+transform:translate(-50%,-50%);
+background:white;
+width:75%;
+max-width:1000px;
+padding:25px;
+border-radius:12px;
+box-shadow:0 8px 25px rgba(0,0,0,0.2);
+}
+
+/* VEHICLE TYPE */
+
+.vehicle-type{
+display:flex;
+gap:30px;
+margin-bottom:15px;
+font-size:16px;
+}
+
+/* FORM */
+
+.form-row{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+}
+
+.form-row input{
+flex:1;
+padding:12px;
+border:1px solid #ccc;
+border-radius:6px;
+font-size:15px;
+}
+
+button{
+background:#f2c94c;
+border:none;
+padding:12px 25px;
+border-radius:6px;
+font-weight:bold;
+cursor:pointer;
+}
+
+/* ROUTES */
+
+.routes{
+margin-top:150px;
+text-align:center;
+}
+
+.cards{
+display:flex;
+justify-content:center;
+gap:25px;
+margin-top:30px;
+flex-wrap:wrap;
+}
+
+.card{
+width:260px;
+background:white;
+border-radius:12px;
+overflow:hidden;
+box-shadow:0 5px 15px rgba(0,0,0,0.1);
+transition:0.3s;
+}
+
+.card:hover{
+transform:translateY(-5px);
+}
+
+.card img{
+width:100%;
+height:160px;
+object-fit:cover;
+}
+
+.card p{
+padding:15px;
+font-weight:bold;
+}
