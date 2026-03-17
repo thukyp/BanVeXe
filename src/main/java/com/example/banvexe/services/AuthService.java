@@ -6,7 +6,7 @@ import com.example.banvexe.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -40,12 +40,22 @@ public class AuthService {
         return "Đăng ký thành công cho: " + dto.getUsername();
     }
 
-    public String login(String username, String password) {
+    public Map<String, Object> login(String username, String password) {
+
         Optional<User> userOpt = userRepository.findByUsername(username);
-        
+
         if (userOpt.isPresent() && passwordEncoder.matches(password, userOpt.get().getPassword())) {
-            return "Đăng nhập thành công! Chào " + userOpt.get().getFullName();
+
+            User user = userOpt.get();
+
+            return Map.of(
+                    "message", "Đăng nhập thành công",
+                    "role", user.getRole().name(),
+                    "username", user.getUsername(),
+                    "fullName", user.getFullName());
         }
-        return "Sai tài khoản hoặc mật khẩu!";
+
+        return Map.of(
+                "message", "Sai tài khoản hoặc mật khẩu");
     }
 }

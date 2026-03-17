@@ -19,25 +19,11 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
         http
-            .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers(
-                        "/",
-                        "/*.html",
-                        "/css/**",
-                        "/js/**",
-                        "/images/**",
-                        "/script.js",
-                        "/style.css",
-                        "/api/auth/**"
-                ).permitAll()
-                .anyRequest().authenticated()
-            )
-            .formLogin(login -> login.disable())
-            .httpBasic(httpBasic -> httpBasic.disable());
-
-        return http.build();   // dòng bắt buộc
+                .csrf(csrf -> csrf.disable()) // THÊM DÒNG NÀY ĐỂ TẮT CSRF
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/admin/**", "/api/**").permitAll() // Cho phép truy cập admin và api
+                        .anyRequest().permitAll());
+        return http.build();
     }
 }

@@ -26,8 +26,10 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody Map<String, String> loginData) {
-        // Gọi đúng biến authService đã khai báo ở trên
-        return authService.login(loginData.get("username"), loginData.get("password"));
+    public Map<String, Object> login(@RequestBody Map<String, String> loginData) {
+
+        return authService.login(
+                loginData.get("username"),
+                loginData.get("password"));
     }
 }

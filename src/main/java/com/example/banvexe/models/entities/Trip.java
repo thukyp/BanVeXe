@@ -25,6 +25,7 @@ public class Trip {
 
     private LocalDateTime departureTime;
     private Double pricePerTicket;
+    private Integer availableSeats;
 
     @OneToMany(mappedBy = "trip")
     private List<Ticket> tickets;
