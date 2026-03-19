@@ -1,31 +1,94 @@
 <!doctype html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
-<head>
+  <head>
     <meta charset="UTF-8" />
     <title>Đăng nhập</title>
-    <script src="/js/auth.js"></script> 
+    <script src="/js/auth.js"></script>
     <style>
-        body { margin: 0; height: 100vh; display: flex; justify-content: center; align-items: center; font-family: Segoe UI, sans-serif; background: linear-gradient(135deg, #4facfe, #00f2fe); }
-        .card { width: 340px; background: white; padding: 35px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); }
-        h2 { text-align: center; margin-bottom: 25px; }
-        input { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
-        input:focus { outline: none; border-color: #4facfe; }
-        button { width: 100%; padding: 11px; border: none; border-radius: 6px; background: #4facfe; color: white; font-size: 15px; cursor: pointer; }
-        button:hover { background: #3794f5; }
-        #message { color: #d9534f; margin-top: 10px; text-align: center; font-size: 14px; min-height: 20px; }
-        .link { text-align: center; margin-top: 15px; font-size: 14px; }
+      body {
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family:
+          Segoe UI,
+          sans-serif;
+        background: linear-gradient(135deg, #4facfe, #00f2fe);
+      }
+      .card {
+        width: 340px;
+        background: white;
+        padding: 35px;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      }
+      h2 {
+        text-align: center;
+        margin-bottom: 25px;
+      }
+      input {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        box-sizing: border-box;
+      }
+      input:focus {
+        outline: none;
+        border-color: #4facfe;
+      }
+      button {
+        width: 100%;
+        padding: 11px;
+        border: none;
+        border-radius: 6px;
+        background: #4facfe;
+        color: white;
+        font-size: 15px;
+        cursor: pointer;
+      }
+      button:hover {
+        background: #3794f5;
+      }
+      #message {
+        color: #d9534f;
+        margin-top: 10px;
+        text-align: center;
+        font-size: 14px;
+        min-height: 20px;
+      }
+      .link {
+        text-align: center;
+        margin-top: 15px;
+        font-size: 14px;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="card">
-        <h2>Đăng nhập</h2>
-        <input id="login-username" type="text" placeholder="Tên đăng nhập" />
-        <input id="login-password" type="password" placeholder="Mật khẩu" />
-        <button type="button" onclick="handleLogin()">Đăng nhập</button>
-        <p id="message"></p>
-        <div class="link">
-            Chưa có tài khoản? <a href="/register">Đăng ký ngay</a>
-        </div>
+      <h2>Đăng nhập</h2>
+      <input id="login-username" type="text" placeholder="Tên đăng nhập" />
+      <input id="login-password" type="password" placeholder="Mật khẩu" />
+      <button type="button" onclick="handleLogin()">Đăng nhập</button>
+      <p id="message"></p>
+      <div class="link">
+        Chưa có tài khoản? <a href="/register">Đăng ký ngay</a>
+      </div>
+      <div class="divider">Hoặc</div>
+
+      <button
+        type="button"
+        class="btn-google"
+        onclick="window.location.href = '/oauth2/authorization/google'"
+      >
+        <img
+          src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg"
+          alt="Google Logo"
+        />
+        Đăng nhập với Google
+      </button>
     </div>
-</body>
+  </body>
 </html>
