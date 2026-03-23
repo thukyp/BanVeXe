@@ -1,10 +1,19 @@
 const API_URL = "/api/auth";
 
-// Xử lý Đăng ký
 async function handleRegister() {
+    const username = document.getElementById('reg-username').value;
+    const password = document.getElementById('reg-password').value;
+    const msgElement = document.getElementById('reg-message');
+
+    // Kiểm tra nhanh các trường bắt buộc
+    if (!username || !password) {
+        msgElement.innerText = "Vui lòng nhập tên đăng nhập và mật khẩu!";
+        return;
+    }
+
     const data = {
-        username: document.getElementById('reg-username').value,
-        password: document.getElementById('reg-password').value,
+        username: username,
+        password: password,
         fullName: document.getElementById('reg-fullname').value,
         email: document.getElementById('reg-email').value,
         phone: document.getElementById('reg-phone').value
@@ -18,39 +27,43 @@ async function handleRegister() {
         });
 
         const result = await response.text();
-        alert(result);
-        if (result.includes("thành công")) {
-            window.location.href = "login.html"; // Đăng ký xong tự qua trang login
+        
+        if (response.ok && result.toLowerCase().includes("thành công")) {
+            alert("Đăng ký thành công! Quay lại trang đăng nhập.");
+            window.location.href = "/login";
+        } else {
+            msgElement.innerText = result; // Hiển thị lỗi từ server trả về
         }
     } catch (error) {
         console.error("Lỗi đăng ký:", error);
+        msgElement.innerText = "Không thể kết nối đến máy chủ!";
     }
 }
 
-// Xử lý Đăng nhập
 async function handleLogin() {
-    const data = {
-        username: document.getElementById('login-username').value,
-        password: document.getElementById('login-password').value
-    };
+    const userNode = document.getElementById('login-username');
+    const passNode = document.getElementById('login-password');
+    const msgElement = document.getElementById("message");
+
+    // Tạo form data chuẩn
+    const params = new URLSearchParams();
+    params.append('username', userNode.value);
+    params.append('password', passNode.value);
 
     try {
-        const response = await fetch(`${API_URL}/login`, {
+        const response = await fetch('/login', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: params
         });
 
-        const result = await response.text();
-        const msgBox = document.getElementById('message');
-        
-        if (result.includes("thành công")) {
-            alert(result);
-            window.location.href = "/home.html"; // Đăng nhập xong vào trang chủ
+        // Nếu đăng nhập đúng, Spring sẽ Redirect (từ SuccessHandler)
+        if (response.redirected) {
+            window.location.href = response.url;
         } else {
-            msgBox.innerText = result;
+            msgElement.innerText = "Sai tài khoản hoặc mật khẩu!";
         }
     } catch (error) {
-        console.error("Lỗi đăng nhập:", error);
+        msgElement.innerText = "Lỗi kết nối máy chủ!";
     }
 }

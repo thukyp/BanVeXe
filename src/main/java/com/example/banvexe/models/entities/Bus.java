@@ -4,9 +4,11 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "buses")
+@Data
 @NoArgsConstructor
 public class Bus {
     @Id
@@ -15,8 +17,9 @@ public class Bus {
 
     private String busNumber;
     private String busType;
-    private Integer capacity; // 16, 32, 45
+    private Integer capacity;
 
     @OneToMany(mappedBy = "bus")
+    @JsonIgnore // THÊM DÒNG NÀY ĐỂ TRÁNH LỖI JSON
     private List<Trip> trips;
 }
