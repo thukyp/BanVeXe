@@ -15,7 +15,9 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 // 1. Bảo mật cơ bản
-                .csrf(csrf -> csrf.disable()) // Tắt CSRF nếu đang phát triển API/Test
+                .csrf(csrf -> csrf
+                        .ignoringRequestMatchers("/api/**") // Chỉ tắt cho các endpoint API (nếu dùng Token/JWT)
+                )
 
                 // 2. Cấu hình phân quyền (Authorize Requests)
                 .authorizeHttpRequests(auth -> auth
