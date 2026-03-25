@@ -23,8 +23,10 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // Tắt để test POST dễ dàng
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/login", "/register", "/css/**", "/js/**").permitAll() // Phải có /register ở
+                        .requestMatchers("/api/tickets/**").permitAll()                                                                         // đây
                         // CHUYỂN CÁI NÀY LÊN ĐẦU TIÊN
-                        .requestMatchers("/js/**", "/css/**", "/images/**", "/static/**", "/favicon.ico").permitAll()
+                        .requestMatchers("/js/**", "/css/**","/api/auth/**", "/images/**", "/static/**", "/favicon.ico").permitAll()
 
                         // Sau đó mới đến các API và phân quyền khác
                         .requestMatchers(
@@ -32,6 +34,7 @@ public class SecurityConfig {
                                 mvc.pattern("/login"),
                                 mvc.pattern("/api/buses/**"), // Đã thêm để JS gọi API thành công
                                 mvc.pattern("/api/routes/**"))
+
                         .permitAll()
 
                         .requestMatchers(mvc.pattern("/admin/**")).hasRole("ADMIN")
@@ -75,6 +78,4 @@ public class SecurityConfig {
             response.sendRedirect("/");
         };
     }
-
-    
 }

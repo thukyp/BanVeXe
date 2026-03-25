@@ -238,17 +238,38 @@
 
       // 3. Xử lý Thanh toán sau
       async function processPayLater(data) {
+        // 1. Chuẩn bị lại object để khớp với Entity/DTO trong Java
+        const payload = {
+          tripId: data.tripId,
+          customerName: data.customerName,
+          customerPhone: data.customerPhone,
+          customerEmail: data.customerEmail,
+          // Đảm bảo seats là mảng hoặc chuỗi tùy theo Backend của bạn
+          // Nếu Backend cần chuỗi "B04,B13" thì dùng data.seats.join(",")
+          seatNumbers: Array.isArray(data.seats) ? data.seats : [data.seats],
+          totalAmount: data.totalAmount,
+          paymentStatus: "PENDING",
+          paymentMethod: "CASH",
+        };
+
+        console.log("Dữ liệu gửi lên Backend:", payload);
+
         const response = await fetch("/api/payment/pay-later", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
+          body: JSON.stringify(payload),
         });
 
         if (response.ok) {
+          // Xóa session sau khi đặt thành công
+          sessionStorage.removeItem("pendingBooking");
           alert("Đặt chỗ thành công! Mã vé đã được lưu.");
           window.location.href = "/payment/success";
         } else {
-          throw new Error("Không thể lưu đơn hàng.");
+          // Đọc chi tiết lỗi từ server để debug
+          const errorDetail = await response.text();
+          console.error("Server Error:", errorDetail);
+          throw new Error("Server báo lỗi: " + errorDetail);
         }
       }
 

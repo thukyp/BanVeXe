@@ -1,11 +1,9 @@
 package com.example.banvexe.models.entities;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.*;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 
 @Entity
 @Table(name = "users")
@@ -16,16 +14,30 @@ public class User {
     private Long id;
 
     @Column(unique = true, nullable = false)
+    @NotBlank(message = "Username không được để trống")
+    @Size(min = 4, max = 50, message = "Username từ 4 đến 50 ký tự")
     private String username;
 
     @Column(nullable = false)
+    @NotBlank(message = "Password không được để trống")
+    @Size(min = 6, message = "Password phải ít nhất 6 ký tự")
     private String password;
 
+    @Size(max = 100, message = "Tên không được quá 100 ký tự")
     private String fullName;
+
+    @Email(message = "Email không hợp lệ")
+    @Size(max = 100, message = "Email không quá 100 ký tự")
     private String email;
+
+    @Pattern(
+        regexp = "^(0|\\+84)[0-9]{9}$",
+        message = "Số điện thoại không hợp lệ (VN)"
+    )
     private String phone;
 
     @Enumerated(EnumType.STRING)
+    @NotNull(message = "Role không được để trống")
     private Role role;
 
     @OneToMany(mappedBy = "user")
@@ -36,10 +48,9 @@ public class User {
         CUSTOMER, ADMIN
     }
 
-    public User() {
-    }
+    public User() {}
 
-    public Long getId() {
+        public Long getId() {
         return id;
     }
 

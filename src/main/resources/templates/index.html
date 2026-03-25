@@ -186,7 +186,7 @@
       const API_BASE = "/api";
 
       document.addEventListener("DOMContentLoaded", () => {
-        fetchPopularRoutes();
+        fetchAllTrips();
 
         // Giữ nguyên các thông báo login/logout
         const urlParams = new URLSearchParams(window.location.search);
@@ -201,7 +201,10 @@
           window.history.replaceState({}, document.title, "/");
         }
       });
-
+      function goToBooking(tripId, routeId) {
+        if (!tripId) return;
+        window.location.href = `/booking?tripId=${tripId}&routeId=${routeId || ""}`;
+      }
       function handleSearch() {
         const from = document.getElementById("departure").value;
         const to = document.getElementById("arrival").value;
@@ -219,67 +222,67 @@
       }
 
       // Thay thế hàm fetchPopularRoutes cũ bằng bản này để an toàn hơn
-      async function fetchPopularRoutes() {
-        const list = document.getElementById("route-list");
+      async function fetchAllTrips() {
+        const container = document.getElementById("route-list");
+        if (!container) return;
+
         try {
-          const response = await fetch(`${API_BASE}/routes`);
-          if (!response.ok) throw new Error("Cổng kết nối bị lỗi");
+          const response = await fetch(`${API_BASE}/trips`);
+          if (!response.ok) throw new Error("Lỗi API");
 
-          const routes = await response.json();
+          const trips = await response.json();
 
-          // Gom nhóm theo điểm đi (Departure)
-          const groups = routes.reduce((acc, r) => {
-            const city = r.departureLocation
-              ? r.departureLocation.trim()
-              : "Khác";
-            if (!acc[city]) acc[city] = [];
-            acc[city].push(r);
-            return acc;
-          }, {});
+          if (!trips || trips.length === 0) {
+            container.innerHTML = `
+                <div class="col-12 text-center py-5">
+                    <i class="bi bi-bus-front text-muted" style="font-size: 3rem;"></i>
+                    <p class="mt-3 text-muted">Hiện tại chưa có chuyến xe nào được mở bán.</p>
+                </div>`;
+            return;
+          }
 
-          list.innerHTML = Object.keys(groups)
-            .map(
-              (city) => `
-      <div class="col-md-4">
-        <div class="route-card shadow-sm">
-          <div class="city-tag"><i class="bi bi-bus-front me-2"></i>Tuyến xe từ ${city}</div>
-          <div class="p-2">
-            ${groups[city]
-              .map(
-                (r) => `
-              <div class="route-item d-flex justify-content-between align-items-center p-3 border-bottom" 
-                   onclick="location.href='/booking?routeId=${r.id}'">
-                <div>
-                  <div class="fw-bold text-primary">${r.arrivalLocation ? r.arrivalLocation.trim() : "Chưa xác định"}</div>
-                  <div class="small text-muted"><i class="bi bi-geo-alt"></i> ${r.distanceKm || 0}km</div>
-                </div>
-                <div class="text-end">
-                  <div class="text-danger fw-bold">
-    ${
-      r.minPrice && r.minPrice > 0
-        ? new Intl.NumberFormat("vi-VN").format(r.minPrice) + "đ"
-        : "Đang cập nhật"
-    }
-</div>
-                  <div class="small text-muted" style="font-size: 0.7rem;">Giá chỉ từ</div>
-                </div>
-              </div>
-            `,
-              )
-              .join("")}
-          </div>
-        </div>
-      </div>
-    `,
-            )
+          container.innerHTML = trips
+            .map((trip) => {
+              const depLoc = trip.route?.departureLocation || "Chưa xác định";
+              const arrLoc = trip.route?.arrivalLocation || "Chưa xác định";
+              const price = trip.pricePerTicket
+                ? trip.pricePerTicket.toLocaleString("vi-VN")
+                : "0";
+              const dateObj = trip.departureTime
+                ? new Date(trip.departureTime)
+                : null;
+              const time = dateObj
+                ? dateObj.toLocaleTimeString("vi-VN", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })
+                : "--:--";
+              const date = dateObj ? dateObj.toLocaleDateString("vi-VN") : "";
+
+              return `
+                <div class="col-md-4 mb-4">
+                    <div class="route-card" onclick="goToBooking(${trip.id}, ${trip.route?.id})">                        
+                        <div class="position-relative">
+                            <img src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400" class="w-100" style="height:160px; object-fit:cover;">
+                            <span class="position-absolute top-0 end-0 m-2 badge bg-danger">Ưu đãi</span>
+                        </div>
+                        <div class="p-3">
+                            <h6 class="fw-bold mb-2">${depLoc} <i class="bi bi-arrow-right"></i> ${arrLoc}</h6>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="small text-muted"><i class="bi bi-clock me-1"></i>${time} - ${date}</span>
+                                <span class="fw-bold text-danger">${price}đ</span>
+                            </div>
+                            <div class="small text-secondary">
+                                <i class="bi bi-bus-front-fill me-1"></i> Xe: ${trip.bus?.busNumber || "N/A"} 
+                                <span class="ms-2"><i class="bi bi-person-check me-1"></i>Còn trống: ${trip.availableSeats || 0}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            })
             .join("");
-        } catch (err) {
-          console.error("Lỗi API:", err);
-          list.innerHTML = `
-      <div class="col-12 text-center py-5">
-        <i class="bi bi-exclamation-triangle text-warning display-4"></i>
-        <p class="text-muted mt-2">Hiện tại không có tuyến xe nào khả dụng. Vui lòng thử lại sau!</p>
-      </div>`;
+        } catch (error) {
+          container.innerHTML = `<div class="col-12 text-center text-danger py-5">Lỗi kết nối dữ liệu chuyến xe.</div>`;
         }
       }
     </script>

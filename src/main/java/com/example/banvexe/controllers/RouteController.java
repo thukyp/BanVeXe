@@ -4,6 +4,9 @@ import com.example.banvexe.models.entities.Route;
 import com.example.banvexe.repositories.RouteProjection;
 import com.example.banvexe.repositories.RouteRepository;
 import com.example.banvexe.services.RouteService;
+
+import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -39,7 +42,7 @@ public class RouteController {
 
     // 3. TẠO MỚI (Admin)
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody Route route) {
+    public ResponseEntity<?> create(@Valid @RequestBody Route route) {
         try {
             Route created = routeService.createRoute(route);
             return ResponseEntity.ok(created);
@@ -50,7 +53,7 @@ public class RouteController {
 
     // 4. CẬP NHẬT (Admin)
     @PutMapping("/{id}")
-    public ResponseEntity<Route> update(@PathVariable Long id, @RequestBody Route route) {
+    public ResponseEntity<Route> update(@Valid @PathVariable Long id, @RequestBody Route route) {
         return ResponseEntity.ok(routeService.updateRoute(id, route));
     }
 
