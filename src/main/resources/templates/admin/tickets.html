@@ -162,11 +162,16 @@
                   : "N/A";
 
               // 3. Xe: lấy từ Trip -> Bus
-              const busInfo =
-                t.trip && t.trip.bus ? `Xe: ${t.trip.bus.licensePlate}` : "";
+              const busInfo = t.trip?.bus?.busNumber
+                ? `Xe: ${t.trip.bus.busNumber}`
+                : "Xe: N/A";
 
-              // 4. SỐ GHẾ: Khớp với biến 'private Integer seatNumber' trong Java
-              const seat = t.seatNumber || "N/A";
+              // 4. SỐ GHẾ
+              const seat = t.seats ? t.seats.split(",").join(", ") : "N/A";
+
+              const total = t.totalAmount
+                ? t.totalAmount.toLocaleString("vi-VN") + "đ"
+                : "N/A";
 
               // 5. THỜI GIAN: Khớp với biến 'private LocalDateTime bookingTime'
               const bookTime = t.bookingTime
