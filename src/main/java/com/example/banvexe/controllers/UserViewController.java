@@ -7,23 +7,34 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.banvexe.models.entities.Ticket;
+import com.example.banvexe.models.entities.Trip;
 import com.example.banvexe.repositories.TicketRepository;
 import com.example.banvexe.repositories.UserRepository;
 import com.example.banvexe.models.entities.User;
 import java.util.List;
 import java.util.Map;
+import com.example.banvexe.services.TripService;
+import com.example.banvexe.repositories.RouteRepository;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
 
 @Controller
 public class UserViewController {
 
     private final UserRepository userRepository;
     private final TicketRepository ticketRepository;
+    private final TripService tripService;
+    @Autowired    private RouteRepository routeRepository;
 
-    public UserViewController(UserRepository userRepository, TicketRepository ticketRepository) {
+    public UserViewController(UserRepository userRepository, TicketRepository ticketRepository,
+            TripService tripService) {
         this.userRepository = userRepository;
         this.ticketRepository = ticketRepository;
+        this.tripService = tripService;
     }
 
     @GetMapping("/")
@@ -120,5 +131,13 @@ public class UserViewController {
         model.addAttribute("user", user); // Truyền nguyên object để bên Thymeleaf lấy được nhiều thông tin hơn
 
         return "myticket";
+    }
+
+    @GetMapping("/api/trips/search/{from}/{to}/{date}")
+    public List<Trip> searchTrips(
+            @PathVariable String from,
+            @PathVariable String to,
+            @PathVariable String date) {
+        return tripService.searchTrips(from, to, date);
     }
 }

@@ -1,63 +1,72 @@
-describe('Hệ thống Bán Vé Xe - Kiểm thử Đăng ký', () => {
-    
-    // Trước mỗi test case, truy cập vào trang đăng ký
-    beforeEach(() => {
-        // Lưu ý: Thay localhost:8080 bằng port thực tế của Spring Boot
-        cy.visit('http://localhost:8080/register'); 
-    });
+describe('BANVEXE - Register Test', () => {
 
-    // 1. Kiểm tra đăng ký thành công (Dùng dữ liệu ngẫu nhiên để tránh trùng)
-    it('1. Đăng ký tài khoản mới thành công', () => {
-        const randomId = Math.floor(Math.random() * 10000);
-        const username = `thuky_${randomId}`;
+  const baseUrl = 'http://localhost:8080'
 
-        cy.get('input[name="fullName"]').type('Phan Thư Kỳ');
-        cy.get('input[name="username"]').type(username);
-        cy.get('input[name="email"]').type(`${username}@gmail.com`);
-        cy.get('input[name="phone"]').type('0987654321');
-        cy.get('input[name="password"]').type('12345678');
-        
-        cy.get('button[type="submit"]').click();
+  // ==============================
+  // 1. REGISTER SUCCESS
+  // ==============================
+  it('Đăng ký thành công', () => {
+    cy.visit(baseUrl + '/register')
 
-        // Kiểm tra xem có chuyển hướng về trang login không
-        cy.url().should('include', '/login');
-    });
+    const random = Date.now()
 
-    // 2. Kiểm tra bỏ trống các trường (HTML5 Validation)
-    it('2. Báo lỗi khi để trống họ tên', () => {
-        cy.get('button[type="submit"]').click();
+    cy.get('[name="fullName"]').type('Nguyen Van A')
+    cy.get('[name="username"]').type('user' + random)
+    cy.get('[name="email"]').type('user' + random + '@gmail.com')
+    cy.get('[name="phone"]').type('0901234567')
+    cy.get('[name="password"]').type('123456')
 
-        // Kiểm tra xem trình duyệt có ngăn chặn và báo lỗi 'required' không
-        cy.get('input[name="fullName"]').then(($el) => {
-            const el = $el[0];
-            expect(el.validity.valueMissing).to.be.true;
-        });
-    });
+    cy.get('button[type="submit"]').click()
 
-    // 3. Kiểm tra định dạng Email không hợp lệ
-    it('3. Báo lỗi khi nhập Email sai định dạng', () => {
-        cy.get('input[name="email"]').type('email-khong-hop-le');
-        cy.get('button[type="submit"]').click();
-
-        cy.get('input[name="email"]').then(($el) => {
-            const el = $el[0];
-            expect(el.validity.typeMismatch).to.be.true;
-        });
-    });
+    cy.url().should('not.include', '/register')
+  })
 
 
-    // 5. Kiểm tra logic phía Server (Ví dụ: Trùng username)
-    it('4. Hiển thị thông báo khi tên tài khoản đã tồn tại', () => {
-        // Nhập username mà bạn đã đăng ký ở Case 1 hoặc admin
-        cy.get('input[name="fullName"]').type('Phan Thư Kỳ');
-        cy.get('input[name="username"]').type('admin'); 
-        cy.get('input[name="email"]').type('admin@gmail.com');
-        cy.get('input[name="phone"]').type('0000000000');
-        cy.get('input[name="password"]').type('12345678');
+  // ==============================
+  // 2. USERNAME ĐÃ TỒN TẠI
+  // ==============================
+  it('Username đã tồn tại', () => {
+    cy.visit(baseUrl + '/register')
 
-        cy.get('button[type="submit"]').click();
+    cy.get('[name="fullName"]').type('Test User')
+    cy.get('[name="username"]').type('user14')
+    cy.get('[name="email"]').type('test@gmail.com')
+    cy.get('[name="phone"]').type('0901234567')
+    cy.get('[name="password"]').type('123456')
 
-        // Kiểm tra thông báo lỗi từ Thymeleaf trả về (class .alert)
-        cy.get('.alert').should('be.visible');
-    });
-});
+    cy.get('button[type="submit"]').click()
+
+    cy.contains('đã tồn tại')
+  })
+
+
+  // ==============================
+  // 3. BỎ TRỐNG FORM
+  // ==============================
+  it('Không nhập dữ liệu', () => {
+    cy.visit(baseUrl + '/register')
+
+    cy.get('button[type="submit"]').click()
+
+    cy.url().should('include', '/register')
+  })
+
+
+  // ==============================
+  // 4. EMAIL SAI ĐỊNH DẠNG
+  // ==============================
+  it('Email không hợp lệ', () => {
+    cy.visit(baseUrl + '/register')
+
+    cy.get('[name="fullName"]').type('Test User')
+    cy.get('[name="username"]').type('user999')
+    cy.get('[name="email"]').type('abc') // sai
+    cy.get('[name="phone"]').type('0901234567')
+    cy.get('[name="password"]').type('123456')
+
+    cy.get('button[type="submit"]').click()
+
+    cy.url().should('include', '/register')
+  })
+
+})

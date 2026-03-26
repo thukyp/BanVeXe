@@ -9,12 +9,20 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import com.example.banvexe.repositories.RouteRepository;
 
 @Service
 public class TripService {
 
     @Autowired
     private TripRepository tripRepository;
+
+    @Autowired
+    private RouteRepository routeRepository;
+
+    public TripService(RouteRepository routeRepository) {
+        this.routeRepository = routeRepository;
+    }
 
     public List<Trip> getAllTrips() {
         return tripRepository.findAll();
@@ -29,11 +37,13 @@ public class TripService {
     }
 
     public List<Trip> searchTrips(String from, String to, String date) {
+
         LocalDate localDate = LocalDate.parse(date);
-        LocalDateTime startOfDay = localDate.atStartOfDay();
-        LocalDateTime endOfDay = localDate.atTime(LocalTime.MAX);
-        return tripRepository.findByRouteDepartureLocationAndRouteArrivalLocationAndDepartureTimeBetween(
-                from, to, startOfDay, endOfDay);
+
+        LocalDateTime start = localDate.atStartOfDay();
+        LocalDateTime end = localDate.plusDays(1).atStartOfDay();
+
+        return routeRepository.searchTrips(from, to, start, end);
     }
 
     public void deleteTrip(Long id) {
