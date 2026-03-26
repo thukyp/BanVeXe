@@ -2,8 +2,14 @@ package com.example.banvexe.repositories;
 
 import com.example.banvexe.models.dto.RouteDTO;
 import com.example.banvexe.models.entities.Route;
+import com.example.banvexe.models.entities.Trip;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface RouteRepository extends JpaRepository<Route, Long> {
@@ -28,4 +34,20 @@ public interface RouteRepository extends JpaRepository<Route, Long> {
 
     // 4. Tìm kiếm gần đúng (Dùng cho chức năng gợi ý - Suggestion)
     List<Route> findByDepartureLocationContainingIgnoreCase(String departureLocation);
+
+    @Query("SELECT DISTINCT r.departureLocation FROM Route r")
+    List<String> findDistinctDepartureLocations();
+
+    @Query("SELECT DISTINCT r.arrivalLocation FROM Route r")
+    List<String> findDistinctArrivalLocations();
+
+    @Query("SELECT t FROM Trip t WHERE " +
+            "LOWER(t.route.departureLocation) LIKE LOWER(CONCAT('%', :from, '%')) AND " +
+            "LOWER(t.route.arrivalLocation) LIKE LOWER(CONCAT('%', :to, '%')) AND " +
+            "t.departureTime >= :start AND t.departureTime < :end")
+    List<Trip> searchTrips(
+            @Param("from") String from,
+            @Param("to") String to,
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end);
 }
