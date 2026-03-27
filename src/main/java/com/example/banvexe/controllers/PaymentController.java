@@ -39,24 +39,54 @@ public class PaymentController {
 
     @PostMapping("/api/payment/create")
     @ResponseBody
-    public ResponseEntity<?> createOrder(@Valid @RequestBody Map<String, Object> request) {
+    public ResponseEntity<?> createOrder(@Valid @RequestBody Map<String, Object> request,
+            Authentication auth) {
         try {
             String paymentMethod = (String) request.get("paymentMethod");
-            // Chuyển đổi amount an toàn hơn
             Long amount = Long.valueOf(request.get("amount").toString());
             String seats = (String) request.get("seats");
-            
+            Long tripId = Long.valueOf(request.get("tripId").toString()); // ✅ FIX
+
+            // ✅ LẤY USER
+            String username = auth.getName();
+            User user = userRepository.findByUsername(username)
+                    .orElseThrow();
+
+            // ✅ LẤY TRIP
+            Trip trip = tripRepository.findById(tripId)
+                    .orElseThrow();
+
+            int seatCount = seats.split(",").length;
+            double total = trip.getPricePerTicket() * seatCount;
 
             if ("OFFLINE".equals(paymentMethod)) {
-                // TODO: Gọi Service lưu vào Database với trạng thái "Chờ thanh toán"
-                return ResponseEntity.ok(Map.of("message", "Đặt vé thành công, vui lòng thanh toán tại quầy!"));
+
+                Ticket ticket = new Ticket();
+                ticket.setTrip(trip);
+                ticket.setUser(user);
+                ticket.setSeats(seats);
+                ticket.setBookingTime(LocalDateTime.now());
+                ticket.setStatus(Ticket.TicketStatus.PAID);
+                ticket.setTotalAmount(total);
+
+                ticketRepository.save(ticket);
+
+                return ResponseEntity.ok(Map.of(
+                        "message", "Đặt vé thành công",
+                        "totalAmount", total));
             } else {
-                // Thanh toán qua PayOS
-                String url = payOSService.createPaymentLink(amount.intValue(), "Ve xe ghe: " + seats);
+                // ✅ ONLINE PAY (PayOS)
+                String url = payOSService.createPaymentLink(
+                        total,
+                        "Ve xe ghe: " + seats);
+
                 return ResponseEntity.ok(Map.of("checkoutUrl", url));
             }
+
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Lỗi: " + e.getMessage()));
+            e.printStackTrace();
+            return ResponseEntity.status(500)
+                    .body(Map.of("error", "Lỗi: " + e.getMessage()));
         }
     }
 

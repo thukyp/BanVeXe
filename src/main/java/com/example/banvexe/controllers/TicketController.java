@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.MediaType;
+import com.example.banvexe.services.InvoiceService;
 import java.util.List;
 
 @RestController
@@ -15,13 +17,16 @@ public class TicketController {
 
     @Autowired
     private TicketService ticketService;
+    @Autowired
+    private InvoiceService invoiceService;
+
 
     @GetMapping
     public ResponseEntity<List<Ticket>> getAllTickets(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size) {
         try {
-            
+
             List<Ticket> tickets = ticketService.getAllTickets();
             if (tickets.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -49,5 +54,16 @@ public class TicketController {
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping("/invoice/{ticketId}/pdf")
+    public ResponseEntity<byte[]> exportPdf(@PathVariable Long ticketId) {
+
+        byte[] pdf = invoiceService.generatePdf(ticketId);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_PDF)
+                .header("Content-Disposition", "inline; filename=invoice.pdf")
+                .body(pdf);
     }
 }

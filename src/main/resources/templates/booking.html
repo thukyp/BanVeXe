@@ -410,6 +410,7 @@
           window.location.href = "/login";
           return;
         }
+        const routeName = document.getElementById("route-name").innerText;
 
         const bookingData = {
           tripId: tripId,
@@ -418,6 +419,7 @@
           customerName: name,
           customerPhone: phone,
           customerEmail: email,
+          routeName: routeName,
           totalAmount: selectedSeats.length * pricePerSeat,
         };
 
