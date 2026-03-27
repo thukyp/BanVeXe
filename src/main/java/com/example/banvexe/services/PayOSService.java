@@ -12,7 +12,7 @@ public class PayOSService {
     private final String apiKey = "206daf4b-9bdb-4976-af92-72f0e46515e1";
     private final String checksumKey = "849676898fff1f52d47315c251f421860b39dbcb4a89c02c0f4dbb6f850a2bf8";
 
-    public String createPaymentLink(int amount, String description) {
+    public String createPaymentLink(double amount, String description) {
         String url = "https://api-merchant.payos.vn/v2/payment-requests";
         RestTemplate restTemplate = new RestTemplate();
 
