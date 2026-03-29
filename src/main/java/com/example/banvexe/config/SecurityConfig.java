@@ -32,6 +32,56 @@ public class SecurityConfig {
         MvcRequestMatcher.Builder mvc = new MvcRequestMatcher.Builder(introspector);
 
         http
+            .csrf(csrf -> csrf.disable()) 
+            .authorizeHttpRequests(auth -> auth
+                // 1. Tài nguyên tĩnh
+                .requestMatchers(mvc.pattern("/css/**"), mvc.pattern("/js/**"), mvc.pattern("/images/**"), 
+                                mvc.pattern("/static/**"), mvc.pattern("/webjars/**"), mvc.pattern("/favicon.ico")).permitAll()
+                
+                // 2. Các trang công khai & Auth
+                .requestMatchers(
+                    mvc.pattern("/"), 
+                    mvc.pattern("/login"), 
+                    mvc.pattern("/register"), 
+                    mvc.pattern("/forgot-password/**"),
+                    mvc.pattern("/reset-password/**"),
+                    mvc.pattern("/error"), 
+                    mvc.pattern("/api/auth/**")
+                ).permitAll()
+                
+                // 3. Cho phép truy cập công khai để TEST PHÂN TRANG (Quan trọng)
+                .requestMatchers(
+                    mvc.pattern("/admin/**"),     // Cho phép vào trang giao diện admin
+                    mvc.pattern("/api/admin/**"), // Cho phép các API admin
+                    mvc.pattern("/api/trips/**"), // Cho phép API lấy dữ liệu chuyến xe
+                    mvc.pattern("/api/routes/**"),
+                    mvc.pattern("/api/buses/**"),
+                    mvc.pattern("/booking")
+                ).permitAll() 
+                
+                // 4. Các trang cần login thực sự
+                .requestMatchers(mvc.pattern("/payment/**"), mvc.pattern("/myticket/**")).authenticated()
+                
+                .anyRequest().authenticated()
+            )
+            .formLogin(form -> form
+                .loginPage("/login")
+                .successHandler(customSuccessHandler()) 
+                .failureUrl("/login?error=true")
+                .permitAll()
+            )
+            .oauth2Login(oauth2 -> oauth2
+                .loginPage("/login")
+                .successHandler(customSuccessHandler())
+            )
+            .logout(logout -> logout
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/?logout=true")
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID")
+                .clearAuthentication(true)
+                .permitAll()
+            );
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         // Các tài nguyên tĩnh và Auth API cho phép truy cập tự do

@@ -3,6 +3,9 @@ package com.example.banvexe.controllers;
 import com.example.banvexe.models.entities.Ticket;
 import com.example.banvexe.services.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page; // QUAN TRỌNG: Thêm dòng này
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +25,17 @@ public class TicketController {
 
 
     @GetMapping
+    public ResponseEntity<Page<Ticket>> getAllTickets(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return ResponseEntity.ok(ticketService.getAllTicketsPaginated(page, size));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteTicket(@PathVariable Long id) {
+        ticketService.deleteTicket(id);
+        return ResponseEntity.noContent().build();
     public ResponseEntity<List<Ticket>> getAllTickets(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size) {
