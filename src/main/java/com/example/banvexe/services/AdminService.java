@@ -51,7 +51,8 @@ public class AdminService {
         long soldTickets = ticketRepository.count();
 
         // Lấy tổng số chỗ của tất cả chuyến xe từ DB
-        Integer totalCapacity = tripRepository.getTotalSystemCapacity();
+        Long totalCapacity = tripRepository.getTotalSystemCapacity();
+        long safeTotalCapacity = (totalCapacity != null) ? totalCapacity : 0;
 
         if (totalCapacity == null || totalCapacity == 0)
             return 0.0;

@@ -199,7 +199,7 @@
       // Hàm gọi API stats từ AdminController bạn vừa tạo
       async function loadStats() {
         try {
-          const res = await fetch("/admin/api/admin/stats");
+          const res = await fetch("/admin/stats");
           const data = await res.json();
 
           // Cập nhật số liệu cơ bản

@@ -82,45 +82,7 @@ public class SecurityConfig {
                 .clearAuthentication(true)
                 .permitAll()
             );
-                .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth
-                        // Các tài nguyên tĩnh và Auth API cho phép truy cập tự do
-                        .requestMatchers(mvc.pattern("/login"), mvc.pattern("/register"), mvc.pattern("/api/auth/**"))
-                        .permitAll()
-                        .requestMatchers(mvc.pattern("/css/**"), mvc.pattern("/js/**"), mvc.pattern("/images/**"))
-                        .permitAll()
-
-                        // Cho phép xem lịch trình, vé công khai
-                        .requestMatchers(mvc.pattern("/api/tickets/**"), mvc.pattern("/api/buses/**"),
-                                mvc.pattern("/api/routes/**"))
-                        .permitAll()
-                        .requestMatchers(mvc.pattern("/")).permitAll()
-
-                        // Phân quyền Admin
-                        .requestMatchers(mvc.pattern("/admin/**")).hasRole("ADMIN")
-
-                        // Các yêu cầu khác phải xác thực (bằng Form hoặc bằng JWT)
-                        .anyRequest().authenticated())
-
-                // THÊM DÒNG NÀY: Chèn bộ lọc JWT vào trước bộ lọc mặc định của Spring
-                .addFilterBefore(jwtAuthenticationFilter,
-                        org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class)
-
-                .formLogin(form -> form
-                        .loginPage("/login")
-                        .successHandler(customSuccessHandler())
-                        .failureUrl("/login?error=true")
-                        .permitAll())
-                .oauth2Login(oauth2 -> oauth2
-                        .loginPage("/login")
-                        .successHandler(customSuccessHandler()))
-                .logout(logout -> logout
-                        .logoutUrl("/logout")
-                        .logoutSuccessUrl("/?logout=true")
-                        .deleteCookies("JSESSIONID")
-                        .permitAll());
-        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
+            
         return http.build();
     }
 

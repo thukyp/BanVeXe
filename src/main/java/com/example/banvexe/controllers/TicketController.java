@@ -20,10 +20,11 @@ public class TicketController {
 
     @Autowired
     private TicketService ticketService;
+
     @Autowired
     private InvoiceService invoiceService;
 
-
+    // API phân trang
     @GetMapping
     public ResponseEntity<Page<Ticket>> getAllTickets(
             @RequestParam(defaultValue = "0") int page,
@@ -32,44 +33,24 @@ public class TicketController {
         return ResponseEntity.ok(ticketService.getAllTicketsPaginated(page, size));
     }
 
+    // Lấy 1 ticket
+    @GetMapping("/{id}")
+    public ResponseEntity<Ticket> getTicketById(@PathVariable Long id) {
+        Ticket ticket = ticketService.getTicketById(id);
+        if (ticket != null) {
+            return ResponseEntity.ok(ticket);
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    // Xóa ticket
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTicket(@PathVariable Long id) {
         ticketService.deleteTicket(id);
         return ResponseEntity.noContent().build();
-    public ResponseEntity<List<Ticket>> getAllTickets(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size) {
-        try {
-
-            List<Ticket> tickets = ticketService.getAllTickets();
-            if (tickets.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
-            return new ResponseEntity<>(tickets, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Ticket> getTicketById(@PathVariable Long id) { // Đã sửa lỗi village ở đây
-        Ticket ticket = ticketService.getTicketById(id);
-        if (ticket != null) {
-            return new ResponseEntity<>(ticket, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<HttpStatus> deleteTicket(@PathVariable Long id) {
-        try {
-            ticketService.deleteTicket(id);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
+    // Xuất PDF hóa đơn
     @GetMapping("/invoice/{ticketId}/pdf")
     public ResponseEntity<byte[]> exportPdf(@PathVariable Long ticketId) {
 
