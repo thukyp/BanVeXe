@@ -31,8 +31,6 @@ public class TicketService {
         return ticketRepository.findAll(pageable);
     }
 
-    public void deleteTicket(Long id) {
-        ticketRepository.deleteById(id);
     public List<Ticket> getAllTickets() {
         List<Ticket> tickets = ticketRepository.findAll();
         return tickets;

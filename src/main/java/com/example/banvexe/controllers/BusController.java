@@ -31,4 +31,6 @@ public class BusController {
 
     @DeleteMapping("/{id}")
     public void delete(@Valid @PathVariable Long id) { busService.delete(id); }
+
+    
 }

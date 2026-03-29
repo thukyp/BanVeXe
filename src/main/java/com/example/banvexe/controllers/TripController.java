@@ -8,16 +8,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page; // Quan trọng: Import của Spring Data
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/trips")
-// Thêm CrossOrigin nếu bạn chạy Frontend và Backend khác Port (ví dụ Live
-// Server 5500)
 @CrossOrigin(origins = "*")
 public class TripController {
 
     @Autowired
     private TripService tripService;
+        @Autowired
+    private TripRepository tripRepository;
 
     // SỬA TẠI ĐÂY: Thêm phân trang cho API
     @GetMapping
@@ -28,14 +30,7 @@ public class TripController {
         // Gọi hàm phân trang đã viết trong TripService
         Page<Trip> tripPage = tripService.getAllTripsPaginated(page, size);
         return ResponseEntity.ok(tripPage);
-    @Autowired
-    private TripRepository tripRepository;
 
-    @GetMapping
-    public ResponseEntity<List<Trip>> getAll() {
-        // Chỉnh sửa Service để khi lấy Trip sẽ tự động Join luôn bảng Route
-        List<Trip> trips = tripService.getAllTrips();
-        return ResponseEntity.ok(trips);
     }
 
     // Lấy chi tiết một chuyến xe (Dùng để load giá vé và thông tin ở trang Booking)
@@ -48,7 +43,6 @@ public class TripController {
 
     // Tạo mới chuyến xe
     @PostMapping
-    public ResponseEntity<Trip> create(@RequestBody Trip trip) {
     public ResponseEntity<Trip> create(@Valid @RequestBody Trip trip) {
         Trip savedTrip = tripService.createTrip(trip);
         return ResponseEntity.ok(savedTrip);
