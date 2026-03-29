@@ -25,8 +25,17 @@ function renderTable(items) {
   if (!listBody) return;
 
   if (items.length === 0) {
-    listBody.innerHTML =
-      '<tr><td colspan="5" class="text-center p-4">Chưa có dữ liệu xe</td></tr>';
+    listBody.replaceChildren();
+
+    const tr = document.createElement("tr");
+    const td = document.createElement("td");
+
+    td.colSpan = 5;
+    td.className = "text-center p-4";
+    td.textContent = "Chưa có dữ liệu xe";
+
+    tr.appendChild(td);
+    listBody.appendChild(tr);
     return;
   }
 
