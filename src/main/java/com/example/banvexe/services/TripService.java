@@ -1,5 +1,6 @@
 package com.example.banvexe.services;
 
+import com.example.banvexe.models.entities.Bus;
 import com.example.banvexe.models.entities.Trip;
 import com.example.banvexe.repositories.TripRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import com.example.banvexe.repositories.RouteRepository;
+import com.example.banvexe.repositories.BusRepository;
+import com.example.banvexe.models.entities.Route;
 
 @Service
 public class TripService {
@@ -24,6 +27,9 @@ public class TripService {
     // Lấy tất cả chuyến xe (không phân trang - nếu cần dùng cho các logic khác)
     @Autowired
     private RouteRepository routeRepository;
+    @Autowired
+    private BusRepository busRepository;
+
 
     public TripService(RouteRepository routeRepository) {
         this.routeRepository = routeRepository;
@@ -38,6 +44,39 @@ public class TripService {
         // Sort.by("departureTime").descending() giúp hiện chuyến mới nhất lên đầu
         Pageable pageable = PageRequest.of(page, size, Sort.by("departureTime").descending());
         return tripRepository.findAll(pageable);
+    }
+
+    public Trip updateTrip(Long id, Trip newTrip) {
+        Trip existing = tripRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Trip not found"));
+
+        // ✅ FIX ROUTE
+        if (newTrip.getRoute() != null && newTrip.getRoute().getId() != null) {
+            Route route = routeRepository.findById(newTrip.getRoute().getId())
+                    .orElseThrow(() -> new RuntimeException("Route not found"));
+            existing.setRoute(route);
+        }
+
+        // ✅ FIX BUS
+        if (newTrip.getBus() != null && newTrip.getBus().getId() != null) {
+            Bus bus = busRepository.findById(newTrip.getBus().getId())
+                    .orElseThrow(() -> new RuntimeException("Bus not found"));
+            existing.setBus(bus);
+        }
+
+        if (newTrip.getDepartureTime() != null) {
+            existing.setDepartureTime(newTrip.getDepartureTime());
+        }
+
+        if (newTrip.getPricePerTicket() != null) {
+            existing.setPricePerTicket(newTrip.getPricePerTicket());
+        }
+
+        if (newTrip.getAvailableSeats() != null) {
+            existing.setAvailableSeats(newTrip.getAvailableSeats());
+        }
+
+        return tripRepository.save(existing);
     }
 
     public Trip createTrip(Trip trip) {

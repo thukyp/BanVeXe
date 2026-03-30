@@ -161,7 +161,9 @@
               <small class="text-muted">GIÁ/GHẾ</small>
               <div
                 class="fw-bold text-primary"
-                th:text="${#numbers.formatInteger(ticket.trip.pricePerTicket, 0, 'COMMA')} + 'đ'"
+                th:text="${ticket.priceAtBooking != null 
+    ? #numbers.formatInteger(ticket.priceAtBooking, 0, 'COMMA') + 'đ' 
+    : #numbers.formatInteger(ticket.trip.pricePerTicket, 0, 'COMMA') + 'đ'}"
               ></div>
             </div>
           </div>
