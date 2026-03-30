@@ -1,24 +1,55 @@
-# Java/Spring Boot
+# Maven
 target/
-*.class
+!.mvn/wrapper/maven-wrapper.jar
+
+# Build
 *.jar
 *.war
-.mvn/
-.classpath
-.project
-.settings/
-bin/
+*.ear
+*.tar
 
-# JavaScript/Node
-node_modules/
-dist/
-.env
+# Logs
+*.log
+logs/
 
-# IDE (VS Code, IntelliJ)
-.idea/
-.vscode/
-*.iml
+# Temp
+*.tmp
+*.temp
 
 # OS
 .DS_Store
 Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# Java
+*.class
+
+# Env
+.env
+
+# Spring Boot config
+application-local.properties
+application-dev.properties
+
+# Node
+node_modules/
+dist/
+build/
+
+# Misc
+*.lock
+*.pid
+
+# Cypress
+node_modules/
+cypress/videos/
+cypress/screenshots/
+cypress/downloads/
+
+.env
