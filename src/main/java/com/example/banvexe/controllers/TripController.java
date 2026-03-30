@@ -18,15 +18,14 @@ public class TripController {
 
     @Autowired
     private TripService tripService;
-        @Autowired
+    @Autowired
     private TripRepository tripRepository;
 
     // SỬA TẠI ĐÂY: Thêm phân trang cho API
     @GetMapping
     public ResponseEntity<Page<Trip>> getAll(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
-    ) {
+            @RequestParam(defaultValue = "10") int size) {
         // Gọi hàm phân trang đã viết trong TripService
         Page<Trip> tripPage = tripService.getAllTripsPaginated(page, size);
         return ResponseEntity.ok(tripPage);
@@ -46,6 +45,13 @@ public class TripController {
     public ResponseEntity<Trip> create(@Valid @RequestBody Trip trip) {
         Trip savedTrip = tripService.createTrip(trip);
         return ResponseEntity.ok(savedTrip);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Trip> update(
+            @PathVariable Long id,
+            @RequestBody Trip trip) {
+        return ResponseEntity.ok(tripService.updateTrip(id, trip));
     }
 
     // Xóa chuyến xe

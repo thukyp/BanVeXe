@@ -29,6 +29,9 @@ public class Ticket {
     @JsonIgnoreProperties({ "tickets" })
     private User user;
 
+    @Column(name = "price_at_booking")
+    private Double priceAtBooking;
+
     private String seats;
 
     private LocalDateTime bookingTime;
